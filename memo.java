@@ -233,40 +233,31 @@ public class memo extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == fnew) {
             int choice = JOptionPane.showConfirmDialog(memo.this, "저장하시겠습니까?", "저장 여부", JOptionPane.YES_NO_OPTION);
-
             if (choice == JOptionPane.YES_OPTION) {
                 saveFile();
             }
-
             new memo();
-
+            
         } else if (e.getSource() == fexit) {
             System.exit(0);
 
         } else if (e.getSource() == fwindow) {
             int choice = JOptionPane.showConfirmDialog(memo.this, "저장하시겠습니까?", "저장 여부", JOptionPane.YES_NO_OPTION);
-
             if (choice == JOptionPane.YES_OPTION) {
                 saveFile();
             }
-
             new memo();
 
         } else if (e.getSource() == fopen) {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("파일 열기");
-
             String desktopPath = "\"C:\\Users\\leo_m\\OneDrive\\바탕 화면\\";
-            ;
             fileChooser.setCurrentDirectory(new File(desktopPath));
-
             int userSelection = fileChooser.showOpenDialog(memo.this);
-
-
+            
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 filePath = selectedFile.getAbsolutePath();
-
                 try {
                     FileReader fileReader = new FileReader(filePath);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -276,17 +267,15 @@ public class memo extends JFrame implements ActionListener {
                     while ((line = bufferedReader.readLine()) != null) {
                         fileContent.append(line).append("\n");
                     }
-
                     text.setText(fileContent.toString());
-
                     bufferedReader.close();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(memo.this, "파일을 열 때 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
             }
+            
         } else if (e.getSource() == fsave) {
-
             saveFile();
 
         } else if (e.getSource() == fprint) {
@@ -307,13 +296,10 @@ public class memo extends JFrame implements ActionListener {
                         }
                         Graphics2D g2d = (Graphics2D) graphics;
                         g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-
                         text.print(g2d);
-
                         return Printable.PAGE_EXISTS;
                     }
                 }, pageFormat);
-
                 try {
                     printerJob.print();
                 } catch (PrinterException ex) {
@@ -349,7 +335,6 @@ public class memo extends JFrame implements ActionListener {
                 }
             }
         } else if (e.getSource() == ffont) {
-
             Font selectedFont = JFontChooser.showDialog(memo.this, "글꼴 선택", text.getFont());
 
             if (selectedFont != null) {
@@ -438,7 +423,6 @@ public class memo extends JFrame implements ActionListener {
         text.getDocument().addUndoableEditListener(undoManager);
 
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
