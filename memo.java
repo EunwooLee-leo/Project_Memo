@@ -1,3 +1,5 @@
+import _20230925.JFontChooser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -51,13 +53,13 @@ public class memo extends JFrame implements ActionListener {
                 fileWriter.write(textToSave);
                 fileWriter.close();
                 JOptionPane.showMessageDialog(memo.this, "파일이 성공적으로 저장되었습니다.");
-                System.exit(0);
+                dispose();
 
             } else if (userChoice == JOptionPane.NO_OPTION) {
-                System.exit(0);
+                dispose();
             }
         } else {
-            System.exit(0);
+            dispose();
         }
     }
 
@@ -199,23 +201,56 @@ public class memo extends JFrame implements ActionListener {
 
     }
 
+    void saveFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("파일 저장");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("텍스트 파일 (*.txt)", "txt"));
+
+        String desktopPath = System.getProperty("user.home") + File.separator + "Desktop";
+        fileChooser.setCurrentDirectory(new File(desktopPath));
+
+        int userSelection = fileChooser.showSaveDialog(memo.this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            fileToSave = fileChooser.getSelectedFile();
+            filePath = fileToSave.getAbsolutePath();
+        }
+        String textToSave = text.getText();
+
+        try {
+            FileWriter fileWriter = new FileWriter(filePath);
+            fileWriter.write(textToSave);
+            fileWriter.close();
+            JOptionPane.showMessageDialog(memo.this, "파일이 성공적으로 저장되었습니다.");
+            System.exit(0);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(memo.this, "파일 저장 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == fnew) {
-            JMenu newMemo = new JMenu();
-            newMemo.setVisible(true);
+            int choice = JOptionPane.showConfirmDialog(memo.this, "저장하시겠습니까?", "저장 여부", JOptionPane.YES_NO_OPTION);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                saveFile();
+            }
+
+            new memo();
+
         } else if (e.getSource() == fexit) {
             System.exit(0);
+
         } else if (e.getSource() == fwindow) {
             int choice = JOptionPane.showConfirmDialog(memo.this, "저장하시겠습니까?", "저장 여부", JOptionPane.YES_NO_OPTION);
+
             if (choice == JOptionPane.YES_OPTION) {
-                // 사용자가 "예"를 선택한 경우
-                // 저장 동작 수행
-                // 예: saveTextToFile();
-            } else {
-                // 사용자가 "아니오"를 선택한 경우
-                // 삭제 동작 수행 또는 아무 동작 없음
-                // 예: deleteSelectedText();
+                saveFile();
             }
+
+            new memo();
 
         } else if (e.getSource() == fopen) {
             JFileChooser fileChooser = new JFileChooser();
@@ -226,7 +261,6 @@ public class memo extends JFrame implements ActionListener {
             fileChooser.setCurrentDirectory(new File(desktopPath));
 
             int userSelection = fileChooser.showOpenDialog(memo.this);
-
 
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
@@ -252,31 +286,9 @@ public class memo extends JFrame implements ActionListener {
                 }
             }
         } else if (e.getSource() == fsave) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("파일 저장");
-            fileChooser.setFileFilter(new FileNameExtensionFilter("텍스트 파일 (*.txt)", "txt"));
 
-            String desktopPath = System.getProperty("user.home") + File.separator + "Desktop";
-            fileChooser.setCurrentDirectory(new File(desktopPath));
+            saveFile();
 
-            int userSelection = fileChooser.showSaveDialog(memo.this);
-
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                fileToSave = fileChooser.getSelectedFile();
-                filePath = fileToSave.getAbsolutePath();
-            }
-            String textToSave = text.getText();
-
-            try {
-                FileWriter fileWriter = new FileWriter(filePath);
-                fileWriter.write(textToSave);
-                fileWriter.close();
-                JOptionPane.showMessageDialog(memo.this, "파일이 성공적으로 저장되었습니다.");
-                System.exit(0);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(memo.this, "파일 저장 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
-            }
         } else if (e.getSource() == fprint) {
             PrinterJob printerJob = PrinterJob.getPrinterJob();
             PageFormat pageFormat = printerJob.defaultPage();
@@ -308,18 +320,23 @@ public class memo extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(memo.this, "인쇄 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
             }
+
         } else if (e.getSource() == fexit) {
             try {
                 handleWindowClosing();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+
         } else if (e.getSource() == fc || e.getSource() == copy) {
             text.copy();
+
         } else if (e.getSource() == fx || e.getSource() == cut) {
             text.cut();
+
         } else if (e.getSource() == fv || e.getSource() == paste) {
             text.paste();
+
         } else if (e.getSource() == fd || e.getSource() == delete) {
             int start = text.getSelectionStart();
             int end = text.getSelectionEnd();
@@ -332,16 +349,20 @@ public class memo extends JFrame implements ActionListener {
                 }
             }
         } else if (e.getSource() == ffont) {
+
             Font selectedFont = JFontChooser.showDialog(memo.this, "글꼴 선택", text.getFont());
 
             if (selectedFont != null) {
                 text.setFont(selectedFont);
             }
+
         } else if (e.getSource() == fz) {
             undoManager.undo();
+
         } else if (e.getSource() == fy) {
             undoManager.redo();
-        } else if (e.getSource() == ff){
+
+        } else if (e.getSource() == ff) {
             String searchText = JOptionPane.showInputDialog(memo.this, "찾을 문자열을 입력하세요:");
             if (searchText != null && !searchText.isEmpty()) {
                 String textContent = text.getText();
@@ -353,9 +374,11 @@ public class memo extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(memo.this, "문자열을 찾을 수 없습니다.", "찾기", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-        }else if (e.getSource() == fa){
+
+        } else if (e.getSource() == fa) {
             text.selectAll();
-        }else if (e.getSource() == ft){
+
+        } else if (e.getSource() == ft) {
             java.util.Date currentDate = new java.util.Date();
             String dateTimeString = currentDate.toString();
 
