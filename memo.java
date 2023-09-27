@@ -1,4 +1,6 @@
-import _20230925.JFontChooser;
+package Memo;
+
+import Memo.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -237,7 +239,7 @@ public class memo extends JFrame implements ActionListener {
                 saveFile();
             }
             new memo();
-            
+
         } else if (e.getSource() == fexit) {
             System.exit(0);
 
@@ -254,7 +256,7 @@ public class memo extends JFrame implements ActionListener {
             String desktopPath = "\"C:\\Users\\leo_m\\OneDrive\\바탕 화면\\";
             fileChooser.setCurrentDirectory(new File(desktopPath));
             int userSelection = fileChooser.showOpenDialog(memo.this);
-            
+
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 filePath = selectedFile.getAbsolutePath();
@@ -274,7 +276,7 @@ public class memo extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(memo.this, "파일을 열 때 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            
+
         } else if (e.getSource() == fsave) {
             saveFile();
 
@@ -338,9 +340,22 @@ public class memo extends JFrame implements ActionListener {
             Font selectedFont = JFontChooser.showDialog(memo.this, "글꼴 선택", text.getFont());
 
             if (selectedFont != null) {
-                text.setFont(selectedFont);
-            }
+                int start = text.getSelectionStart();
+                int end = text.getSelectionEnd();
 
+                if (start != end) {
+                    // 커서가 선택한 부분에만 폰트를 적용
+                    MutableAttributeSet attrs = new SimpleAttributeSet();
+                    StyleConstants.setFontFamily(attrs, selectedFont.getFamily());
+                    StyleConstants.setFontSize(attrs, selectedFont.getSize());
+                    StyleConstants.setBold(attrs, (selectedFont.getStyle() & Font.BOLD) != 0);
+                    StyleConstants.setItalic(attrs, (selectedFont.getStyle() & Font.ITALIC) != 0);
+                    StyleConstants.setForeground(attrs, JFontChooser.selectedColor);
+
+                    StyledDocument doc = text.getStyledDocument();
+                    doc.setCharacterAttributes(start, end - start, attrs, false);
+                }
+            }
         } else if (e.getSource() == fz) {
             undoManager.undo();
 
