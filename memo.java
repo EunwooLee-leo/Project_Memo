@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
+import java.net.URI;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.*;
@@ -17,7 +18,7 @@ import javax.swing.undo.UndoManager;
 public class memo extends JFrame implements ActionListener {
     JMenuBar mb;
     JMenu fileMenu, fileEdit, form, help;
-    JMenuItem fnew, fopen, fsave, fexit, fwindow, fprint, fz, fy, fx, fc, fv, fd, ff, fa, ft, ffont, cut, paste, copy, delete;
+    JMenuItem fnew, fopen, fsave, fexit, fwindow, fprint, fz, fy, fx, fc, fv, fd, ff, fa, ft, ffont, cut, paste, copy, delete, helpMenu;
     Font font = new Font("serif", Font.BOLD, 20);
     JTextPane text;
     File fileToSave;
@@ -179,6 +180,11 @@ public class memo extends JFrame implements ActionListener {
 
         form.add(ffont);
 
+        helpMenu = new  JMenuItem("도움말 (H)");
+        helpMenu.setAccelerator(KeyStroke.getKeyStroke('H', Event.CTRL_MASK));
+
+        help.add(helpMenu);
+
     }
 
     void event() {
@@ -200,6 +206,7 @@ public class memo extends JFrame implements ActionListener {
         fa.addActionListener(this);
         ffont.addActionListener(this);
         fz.addActionListener(this);
+        helpMenu.addActionListener(this);
 
     }
 
@@ -383,7 +390,23 @@ public class memo extends JFrame implements ActionListener {
             String dateTimeString = currentDate.toString();
 
             text.setText(text.getText() + dateTimeString);
+        } else if (e.getSource() == helpMenu) {
+            try {
+                URI uri = new URI("http://www.naver.com"); // 원하는 웹 페이지의 URL로 변경
+
+                // 데스크톱 객체 생성
+                Desktop desktop = Desktop.getDesktop();
+
+                // 기본 브라우저를 사용하여 웹 페이지 열기
+                desktop.browse(uri);
+
+                Runtime.getRuntime().exec("rundll32 url.dll, FileProtocolHandler " +uri);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(memo.this, "웹 페이지를 열 수 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
         }
+
     }
 
     void popUp() {
