@@ -1,15 +1,11 @@
 package Memo;
 
-import Memo.JFontChooser;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
 import java.net.URI;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.*;
 import javax.swing.text.*;
 import javax.swing.undo.UndoManager;
@@ -20,7 +16,7 @@ public class memo extends JFrame implements ActionListener {
     JMenu fileMenu, fileEdit, form, help;
     JMenuItem fnew, fopen, fsave, fexit, fwindow, fprint, fz, fy, fx, fc, fv, fd, ff, fa, ft, ffont, cut, paste, copy, delete, helpMenu;
     Font font = new Font("serif", Font.BOLD, 20);
-    JTextPane text;
+    static JTextPane text;
     File fileToSave;
     String filePath;
     UndoManager undoManager = new UndoManager();
@@ -346,23 +342,6 @@ public class memo extends JFrame implements ActionListener {
         } else if (e.getSource() == ffont) {
             Font selectedFont = JFontChooser.showDialog(memo.this, "글꼴 선택", text.getFont());
 
-            if (selectedFont != null) {
-                int start = text.getSelectionStart();
-                int end = text.getSelectionEnd();
-
-                if (start != end) {
-                    // 커서가 선택한 부분에만 폰트를 적용
-                    MutableAttributeSet attrs = new SimpleAttributeSet();
-                    StyleConstants.setFontFamily(attrs, selectedFont.getFamily());
-                    StyleConstants.setFontSize(attrs, selectedFont.getSize());
-                    StyleConstants.setBold(attrs, (selectedFont.getStyle() & Font.BOLD) != 0);
-                    StyleConstants.setItalic(attrs, (selectedFont.getStyle() & Font.ITALIC) != 0);
-                    StyleConstants.setForeground(attrs, JFontChooser.selectedColor);
-
-                    StyledDocument doc = text.getStyledDocument();
-                    doc.setCharacterAttributes(start, end - start, attrs, false);
-                }
-            }
         } else if (e.getSource() == fz) {
             undoManager.undo();
 
